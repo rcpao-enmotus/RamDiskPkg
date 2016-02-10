@@ -67,4 +67,38 @@ extern EFI_COMPONENT_NAME_PROTOCOL  gRamDiskComponentName;
 #include "ComponentName.h"
 #include "BlockIo.h"
 
+#include "pr.h"
+
+
+typedef struct _RAM_DISK_DEVICE_PATH {
+  EFI_DEVICE_PATH Header;
+  EFI_GUID Guid;
+  UINT8 DiskId[8];
+  EFI_DEVICE_PATH EndDevicePath;
+} RAM_DISK_DEVICE_PATH;
+
+typedef struct _ADD_LBA_OFS_DISK {
+  EFI_BLOCK_IO_PROTOCOL BlockIoProtocol;
+  EFI_BLOCK_IO_MEDIA BlockIoMedia;
+  EFI_DEVICE_PATH *ParentDevicePath;
+  EFI_DEVICE_PATH *DevicePath;
+  BOOLEAN Installed;
+} ADD_LBA_OFS_DISK;
+
+
+/* ---------------------------------------------------------------------------
+Externals
+--------------------------------------------------------------------------- */
+
+#if (defined(__RAM_DISK_C))
+
+UINTN DbgLevel = DEFAULT_DBG_LEVEL;
+
+#else /* #if (defined(__RAM_DISK_C)) */
+
+extern UINTN DbgLevel;
+
+#endif /* #if (defined(__RAM_DISK_C)) */
+
+
 #endif

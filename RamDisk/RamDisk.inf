@@ -28,6 +28,8 @@
   ComponentName.h
   BlockIo.c
   BlockIo.h
+  pr.c
+  pr.h
 
 [LibraryClasses]
   UefiDriverEntryPoint
@@ -41,7 +43,7 @@
 
 [Protocols]
   gEfiDriverBindingProtocolGuid
-  gEfiPciIoProtocolGuid
+  #gEfiPciIoProtocolGuid
   gEfiDriverSupportedEfiVersionProtocolGuid
   gEfiComponentName2ProtocolGuid
   gEfiComponentNameProtocolGuid

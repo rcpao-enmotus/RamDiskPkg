@@ -143,7 +143,7 @@ RamDiskComponentNameGetControllerName (
   Status = EfiTestManagedDevice (
              ControllerHandle,
              gRamDiskDriverBinding.DriverBindingHandle,
-             &gEfiPciIoProtocolGuid
+             &gEfiBlockIoProtocolGuid /* &gEfiPciIoProtocolGuid */
              );
   if (EFI_ERROR (Status)) {
     return Status;

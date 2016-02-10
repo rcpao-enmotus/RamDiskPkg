@@ -55,6 +55,27 @@ EFI_BLOCK_IO2_PROTOCOL  gRamDiskBlockIo2 = {
   RamDiskBlockIoFlushBlocksEx   // FlushBlocks
 };
 
+
+static RAM_DISK_DEVICE_PATH RamDiskDevicePath = {
+  {
+    MESSAGING_DEVICE_PATH, /* Type */
+    MSG_VENDOR_DP, /* SubType */
+    {
+      sizeof(RAM_DISK_DEVICE_PATH) - END_DEVICE_PATH_LENGTH, /* Length LSB */
+      0, /* Length MSB */
+    }
+  },
+  /* GUID {e8d377e1-d042-11e5-850b-005056c00008} */
+  {0xe8d377e1, 0xd042, 0x11e5, {0x85, 0x0b, 0x00, 0x50, 0x56, 0xc0, 0x00, 0x08}},
+  {0,0,0,0,0,0,0,0},	// DiskId assigned below
+  {
+    END_DEVICE_PATH_TYPE,
+    END_ENTIRE_DEVICE_PATH_SUBTYPE,
+    {END_DEVICE_PATH_LENGTH, 0}
+  }
+};
+
+
 /**
   Read BufferSize bytes from Lba into Buffer.
 

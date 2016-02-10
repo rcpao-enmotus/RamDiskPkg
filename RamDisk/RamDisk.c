@@ -9,6 +9,7 @@
 
 **/
 
+#define __RAM_DISK_C
 #include "RamDisk.h"
 
 ///
@@ -210,7 +211,60 @@ RamDiskDriverBindingSupported (
   IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
   )
 {
-  return EFI_UNSUPPORTED;
+#undef FN
+#define FN "RamDiskDriverBindingSupported"
+#define DBG_RamDiskDriverBindingSupported DL_DISABLED //DL_80
+  EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol;
+  EFI_STATUS EfiStatus;
+
+
+  /* gEfiDevicePathProtocolGuid */
+
+  EfiStatus = gBS->OpenProtocol (
+    ControllerHandle,
+    &gEfiDevicePathProtocolGuid,
+    NULL,
+    This->DriverBindingHandle,
+    ControllerHandle,
+    EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+  );
+  if (EFI_ERROR(EfiStatus)) {
+    DBG_PR(DBG_RamDiskDriverBindingSupported, "Error testing gEfiDevicePathProtocolGuid\n");
+    return (EfiStatus);
+  }
+
+  EfiStatus = gBS->CloseProtocol (
+    ControllerHandle,
+    &gEfiDevicePathProtocolGuid,
+    This->DriverBindingHandle,
+    ControllerHandle
+  );
+
+
+  /* gEfiBlockIoProtocolGuid */
+
+  EfiStatus = gBS->OpenProtocol (
+    ControllerHandle,
+    &gEfiBlockIoProtocolGuid,
+    (VOID **)&BlockIoProtocol,
+    This->DriverBindingHandle,
+    ControllerHandle,
+    EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+  );
+  if (EFI_ERROR(EfiStatus)) {
+    DBG_PR(DBG_RamDiskDriverBindingSupported, "Error testing gEfiBlockIoProtocolGuid\n");
+    return (EfiStatus);
+  }
+
+  EfiStatus = gBS->CloseProtocol (
+    ControllerHandle,
+    &gEfiBlockIoProtocolGuid,
+    This->DriverBindingHandle,
+    ControllerHandle
+  );
+
+
+  return (EfiStatus);
 }
 
 /**
@@ -256,6 +310,8 @@ RamDiskDriverBindingStart (
   IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
   )
 {
+#undef FN
+#define FN "RamDiskDriverBindingStart"
   return EFI_UNSUPPORTED;
 }
 
@@ -294,5 +350,7 @@ RamDiskDriverBindingStop (
   IN EFI_HANDLE                   *ChildHandleBuffer OPTIONAL
   )
 {
+#undef FN
+#define FN "RamDiskDriverBindingStop"
   return EFI_UNSUPPORTED;
 }
