@@ -1,0 +1,52 @@
+## @file
+#  TODO: Brief Description of UEFI Driver RamDisk
+#  
+#  TODO: Detailed Description of UEFI Driver RamDisk
+#
+#  TODO: Copyright for UEFI Driver RamDisk
+#  
+#  TODO: License for UEFI Driver RamDisk
+#  
+##
+
+[Defines]
+  INF_VERSION               = 0x00010005
+  BASE_NAME                 = RamDisk
+  FILE_GUID                 = e029fb80-d035-11e5-b654-005056c00008
+  MODULE_TYPE               = UEFI_DRIVER
+  VERSION_STRING            = 0.1
+  ENTRY_POINT               = RamDiskDriverEntryPoint
+  UNLOAD_IMAGE              = RamDiskUnload
+
+[Packages]
+  MdePkg/MdePkg.dec
+
+[Sources]
+  RamDisk.h
+  RamDisk.c
+  ComponentName.c
+  ComponentName.h
+  BlockIo.c
+  BlockIo.h
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  UefiBootServicesTableLib
+  MemoryAllocationLib
+  BaseMemoryLib
+  BaseLib
+  UefiLib
+  DevicePathLib
+  DebugLib
+
+[Protocols]
+  gEfiDriverBindingProtocolGuid
+  gEfiPciIoProtocolGuid
+  gEfiDriverSupportedEfiVersionProtocolGuid
+  gEfiComponentName2ProtocolGuid
+  gEfiComponentNameProtocolGuid
+  gEfiBlockIoProtocolGuid
+  gEfiBlockIo2ProtocolGuid
+
+[Guids]
+

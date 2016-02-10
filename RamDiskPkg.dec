@@ -1,0 +1,27 @@
+## @file
+#  TODO: Brief Description of Package RamDiskPkg
+#  
+#  TODO: Detailed Description of Package RamDiskPkg
+#
+#  TODO: Copyright for Pacvkage RamDiskPkg
+#  
+#  TODO: License for Package RamDiskPkg
+#  
+##
+
+[Defines]
+  DEC_SPECIFICATION = 0x00010005
+  PACKAGE_NAME      = RamDiskPkg
+  PACKAGE_GUID      = 739c85f0-d035-11e5-8753-005056c00008
+  PACKAGE_VERSION   = 0.1
+
+[Includes]
+  Include
+
+[LibraryClasses]
+
+[Protocols]
+  ## Include/Protocol/RamDiskProtocol.h
+  gEfiRamDiskProtocolProtocolGuid = {0x8eb35670, 0xd035, 0x11e5, {0xa6, 0x34, 0x00, 0x50, 0x56, 0xc0, 0x00, 0x08}}
+
+[Guids]
