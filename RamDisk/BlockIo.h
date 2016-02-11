@@ -1,13 +1,53 @@
 /** @file
-  TODO: Brief Description of UEFI Driver RamDisk
-  
-  TODO: Detailed Description of UEFI Driver RamDisk
+RamDisk -- UEFI RamDisk Driver
+Copyright (C) 2016  Enmotus, Inc.
 
-  TODO: Copyright for UEFI Driver RamDisk
-  
-  TODO: License for UEFI Driver RamDisk
+http://www.enmotus.com
+65 Enterprise
+Aliso Viejo, CA 92656
+Phone: 949.330.6220
+Info@enmotus.com
+sales@enmotus.com
+saleseurope@enmotus.com
+
+
+GNU General Public License, version 2
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; only version 2
+of the License.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 **/
+
+/**
+  Reset the block device hardware.
+
+  @param[in]  This                 Indicates a pointer to the calling context.
+  @param[in]  ExtendedVerification Indicates that the driver may perform a more
+                                   exhausive verfication operation of the device
+                                   during reset.
+
+  @retval EFI_SUCCESS          The device was reset.
+  @retval EFI_DEVICE_ERROR     The device is not functioning properly and could
+                               not be reset.
+
+**/
+EFI_STATUS
+EFIAPI
+RamDiskBlockIoReset (
+  IN EFI_BLOCK_IO_PROTOCOL  *This,
+  IN BOOLEAN                 ExtendedVerification
+  );
 
 /**
   Read BufferSize bytes from Lba into Buffer.
@@ -99,7 +139,7 @@ RamDiskBlockIoFlushBlocks (
 **/
 EFI_STATUS
 EFIAPI
-RamDiskBlockIoReset (
+RamDiskBlockIoResetEx (
   IN EFI_BLOCK_IO2_PROTOCOL  *This,
   IN BOOLEAN                 ExtendedVerification
   );

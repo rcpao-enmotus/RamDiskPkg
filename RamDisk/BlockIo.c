@@ -1,11 +1,31 @@
 /** @file
-  TODO: Brief Description of UEFI Driver RamDisk
-  
-  TODO: Detailed Description of UEFI Driver RamDisk
+RamDisk -- UEFI RamDisk Driver
+Copyright (C) 2016  Enmotus, Inc.
 
-  TODO: Copyright for UEFI Driver RamDisk
-  
-  TODO: License for UEFI Driver RamDisk
+http://www.enmotus.com
+65 Enterprise
+Aliso Viejo, CA 92656
+Phone: 949.330.6220
+Info@enmotus.com
+sales@enmotus.com
+saleseurope@enmotus.com
+
+
+GNU General Public License, version 2
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; only version 2
+of the License.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 **/
 
@@ -49,32 +69,35 @@ EFI_BLOCK_IO_PROTOCOL  gRamDiskBlockIo = {
 GLOBAL_REMOVE_IF_UNREFERENCED 
 EFI_BLOCK_IO2_PROTOCOL  gRamDiskBlockIo2 = {
   &gRamDiskBlockIoMedia,        // Media
-  RamDiskBlockIoReset,          // Reset
+  RamDiskBlockIoResetEx,        // Reset
   RamDiskBlockIoReadBlocksEx,   // ReadBlocks
   RamDiskBlockIoWriteBlocksEx,  // WriteBlocks
   RamDiskBlockIoFlushBlocksEx   // FlushBlocks
 };
 
 
-static RAM_DISK_DEVICE_PATH RamDiskDevicePath = {
-  {
-    MESSAGING_DEVICE_PATH, /* Type */
-    MSG_VENDOR_DP, /* SubType */
-    {
-      sizeof(RAM_DISK_DEVICE_PATH) - END_DEVICE_PATH_LENGTH, /* Length LSB */
-      0, /* Length MSB */
-    }
-  },
-  /* GUID {e8d377e1-d042-11e5-850b-005056c00008} */
-  {0xe8d377e1, 0xd042, 0x11e5, {0x85, 0x0b, 0x00, 0x50, 0x56, 0xc0, 0x00, 0x08}},
-  {0,0,0,0,0,0,0,0},	// DiskId assigned below
-  {
-    END_DEVICE_PATH_TYPE,
-    END_ENTIRE_DEVICE_PATH_SUBTYPE,
-    {END_DEVICE_PATH_LENGTH, 0}
-  }
-};
+/**
+  Reset the block device hardware.
 
+  @param[in]  This                 Indicates a pointer to the calling context.
+  @param[in]  ExtendedVerification Indicates that the driver may perform a more
+                                   exhausive verfication operation of the device
+                                   during reset.
+
+  @retval EFI_SUCCESS          The device was reset.
+  @retval EFI_DEVICE_ERROR     The device is not functioning properly and could
+                               not be reset.
+
+**/
+EFI_STATUS
+EFIAPI
+RamDiskBlockIoReset (
+  IN EFI_BLOCK_IO_PROTOCOL  *This,
+  IN BOOLEAN                 ExtendedVerification
+  )
+{
+  return EFI_SUCCESS;
+}
 
 /**
   Read BufferSize bytes from Lba into Buffer.
@@ -105,7 +128,40 @@ RamDiskBlockIoReadBlocks (
   OUT VOID                          *Buffer
   )
 {
-  return EFI_DEVICE_ERROR;
+#undef FN
+#define FN "RamDiskBlockIoReadBlocks"
+#define DBG_RamDiskBlockIoReadBlocks DL_DISABLED /* DL_DISABLED DL_80 */
+  EFI_BLOCK_IO_MEDIA *Media;
+  RAM_DISK *RamDisk;
+  EFI_PHYSICAL_ADDRESS RamBufferPtr;
+
+
+  DBG_PR(DBG_RamDiskBlockIoReadBlocks, "MediaId=%08X LBA=%016lX BufferSize=%d Buffer=%16lX\n", MediaId, Lba, BufferSize, Buffer);
+
+  RamDisk = (RAM_DISK *)This;
+  Media = &RamDisk->BlockIoMedia;
+
+  if (BufferSize % Media->BlockSize != 0) {
+    DBG_PR(DBG_RamDiskBlockIoReadBlocks, "Error: (BufferSize % Media->BlockSize != 0)\n");
+    return EFI_BAD_BUFFER_SIZE;
+  }
+
+  if (Lba > Media->LastBlock) {
+    DBG_PR(DBG_RamDiskBlockIoReadBlocks, "Error: (Lba > Media->LastBlock)\n");
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if (Lba + BufferSize / Media->BlockSize - 1 > Media->LastBlock) {
+    DBG_PR(DBG_RamDiskBlockIoReadBlocks, "Error: (Lba + BufferSize / Media->BlockSize - 1 > Media->LastBlock)\n");
+    return EFI_INVALID_PARAMETER;
+  }
+
+  RamBufferPtr = (EFI_PHYSICAL_ADDRESS)RamDisk->RamBuffer + MultU64x32(RamDisk->AddLbaOfs + Lba, Media->BlockSize);
+  CopyMem(Buffer, (VOID*)RamBufferPtr, BufferSize);
+  DBG_PR(DBG_RamDiskBlockIoReadBlocks, "Lba=%016lX bs=%08X RamBufferPtr=%016lX\n", Lba, Media->BlockSize, RamBufferPtr);
+  //DBG_PR_BUF(DBG_RamDiskBlockIoReadBlocks, Buffer, BufferSize);
+
+  return (EFI_SUCCESS);
 }
 
 /**
@@ -138,7 +194,40 @@ RamDiskBlockIoWriteBlocks (
   IN VOID                           *Buffer
   )
 {
-  return EFI_DEVICE_ERROR;
+#undef FN
+#define FN "RamDiskBlockIoWriteBlocks"
+#define DBG_RamDiskBlockIoWriteBlocks DL_DISABLED /* DL_DISABLED DL_80 */
+  EFI_BLOCK_IO_MEDIA *Media;
+  RAM_DISK *RamDisk;
+  EFI_PHYSICAL_ADDRESS RamBufferPtr;
+
+
+  DBG_PR(DBG_RamDiskBlockIoWriteBlocks, "MediaId=%08X LBA=%016lX BufferSize=%d Buffer=%16lX\n", MediaId, Lba, BufferSize, Buffer);
+
+  RamDisk = (RAM_DISK *)This;
+  Media = &RamDisk->BlockIoMedia;
+
+  if (BufferSize % Media->BlockSize != 0) {
+    DBG_PR(DBG_RamDiskBlockIoReadBlocks, "Error: (BufferSize % Media->BlockSize != 0)\n");
+    return EFI_BAD_BUFFER_SIZE;
+  }
+
+  if (Lba > Media->LastBlock) {
+    DBG_PR(DBG_RamDiskBlockIoReadBlocks, "Error: (Lba > Media->LastBlock)\n");
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if (Lba + BufferSize / Media->BlockSize - 1 > Media->LastBlock) {
+    DBG_PR(DBG_RamDiskBlockIoReadBlocks, "Error: (Lba + BufferSize / Media->BlockSize - 1 > Media->LastBlock)\n");
+    return EFI_INVALID_PARAMETER;
+  }
+
+  RamBufferPtr = (EFI_PHYSICAL_ADDRESS)RamDisk->RamBuffer + MultU64x32(RamDisk->AddLbaOfs + Lba, Media->BlockSize);
+  CopyMem((VOID*)RamBufferPtr, Buffer, BufferSize);
+  DBG_PR(DBG_RamDiskBlockIoWriteBlocks, "Lba=%016lX bs=%08X RamBufferPtr=%016lX\n", Lba, Media->BlockSize, RamBufferPtr);
+  //DBG_PR_BUF(DBG_RamDiskBlockIoWriteBlocks, Buffer, BufferSize);
+
+  return (EFI_SUCCESS);
 }
 
 /**
@@ -157,7 +246,7 @@ RamDiskBlockIoFlushBlocks (
   IN EFI_BLOCK_IO_PROTOCOL  *This
   )
 {
-  return EFI_DEVICE_ERROR;
+  return EFI_SUCCESS;
 }
 
 /**
@@ -175,12 +264,12 @@ RamDiskBlockIoFlushBlocks (
 **/
 EFI_STATUS
 EFIAPI
-RamDiskBlockIoReset (
+RamDiskBlockIoResetEx (
   IN EFI_BLOCK_IO2_PROTOCOL  *This,
   IN BOOLEAN                 ExtendedVerification
   )
 {
-  return EFI_DEVICE_ERROR;
+  return EFI_SUCCESS;
 }
 
 /**

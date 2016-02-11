@@ -1,19 +1,60 @@
+/** @file
+RamDisk -- UEFI RamDisk Driver
+Copyright (C) 2016  Enmotus, Inc.
+
+http://www.enmotus.com
+65 Enterprise
+Aliso Viejo, CA 92656
+Phone: 949.330.6220
+Info@enmotus.com
+sales@enmotus.com
+saleseurope@enmotus.com
+
+
+GNU General Public License, version 2
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; only version 2
+of the License.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+**/
+
 /* ---------------------------------------------------------------------------
 pr.c
 --------------------------------------------------------------------------- */
 
 
-#include "pr.h"
+/* ---------------------------------------------------------------------------
+Include Files
+--------------------------------------------------------------------------- */
 #include <Library/UefiLib.h> /* Print() */
 #include <Library/BaseLib/BaseLibInternals.h> /* InternalMathDivU64x32 */
 
+#define __PR_C
+#include "pr.h"
+
+
+/* ---------------------------------------------------------------------------
+Defines
+--------------------------------------------------------------------------- */
 
 //#include <ctype.h> /* isprint */
 #define isprint(c) ((c > 0x1F) && (c != 0x7F))
 
 
-UINTN PrIndentLevel = 0;
-
+/* ---------------------------------------------------------------------------
+Functions
+--------------------------------------------------------------------------- */
 
 /* ---------------------------------------------------------------------------
 PrIndent
@@ -66,9 +107,9 @@ void PrIndent(void) {
 ;
 ;Ported from en_bootier/common-asap.nasm.
 --------------------------------------------------------------------------- */
-void PrBufxxdr(void *pBuf, UINT32 Length) {
+void PrBufxxdr(void *pBuf, UINTN Length) {
   unsigned char *p = pBuf;
-  UINT32 Offs = 0;
+  UINTN Offs = 0;
   int BytesInLinePrinted = 0;
   int PrintablesPrinted = 0;
 
