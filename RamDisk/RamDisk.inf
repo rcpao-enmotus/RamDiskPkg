@@ -50,7 +50,7 @@
   BlockIo.h
   pr.c
   pr.h
-  diskimage-2_88MB.h
+  diskimage.h
 
 [LibraryClasses]
   UefiDriverEntryPoint

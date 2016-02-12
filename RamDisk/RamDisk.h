@@ -115,9 +115,9 @@ Externals
 
 #if (defined(__RAM_DISK_C))
 
-#include "diskimage-2_88MB.h"
-#define diskimage EFI_2_88MB_img
-#define diskimage_len EFI_2_88MB_img_len
+#include "diskimage.h"
+#define diskimage RamDisk_img
+#define diskimage_len RamDisk_img_len
 
 
 static RAM_DISK_DEVICE_PATH RamDiskDevicePath = {
@@ -143,10 +143,10 @@ RAM_DISK RamDisk;
 
 #else /* #if (defined(__RAM_DISK_C)) */
 
-extern unsigned char EFI_2_88MB_img[];
-extern unsigned int EFI_2_88MB_img_len;
-#define diskimage EFI_2_88MB_img
-#define diskimage_len EFI_2_88MB_img_len
+extern unsigned char RamDisk_img[];
+extern unsigned int RamDisk_img_len;
+#define diskimage RamDisk_img
+#define diskimage_len RamDisk_img_len
 
 extern RAM_DISK_DEVICE_PATH RamDiskDevicePath;
 extern RAM_DISK RamDisk;

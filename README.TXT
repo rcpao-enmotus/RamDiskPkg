@@ -1,9 +1,13 @@
 RamDisk -- RamDisk UEFI Driver
 
-This version compiles diskimage-2_88MB.h directly into RamDisk.efi.
+https://github.com/rcpao-enmotus/RamDiskPkg
 
-EFI-2_88MB.img can be mounted by ImDisk Virtual Disk Driver available from http://www.ltr-data.se/opencode.html/
-Use xxd-i.sh to generate diskimage-2_88MB.h from EFI-2_88MB.img.
+
+This version compiles diskimage.h directly into RamDisk.efi.
+
+RamDisk.img can be mounted by ImDisk Virtual Disk Driver available from 
+http://www.ltr-data.se/opencode.html/
+Use xxd-i.sh to generate diskimage.h from RamDisk.img.
 
 
 Build Instructions
