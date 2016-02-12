@@ -1,6 +1,7 @@
 RamDisk -- RamDisk UEFI Driver
 
 https://github.com/rcpao-enmotus/RamDiskPkg
+Roger C. Pao <rcpao.enmotus+RamDiskEfi@gmail.com>
 
 
 This version compiles diskimage.h directly into RamDisk.efi.

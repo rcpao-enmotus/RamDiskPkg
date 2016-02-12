@@ -9,6 +9,7 @@ Phone: 949.330.6220
 Info@enmotus.com
 sales@enmotus.com
 saleseurope@enmotus.com
+Roger C. Pao <rcpao.enmotus+RamDiskEfi@gmail.com>
 
 
 GNU General Public License, version 2
