@@ -91,6 +91,15 @@ Defines
 		} \
 	} while (0)
 
+#if (defined(__GNUC__))
+#define DBG_PR(dbglvl, fmt, ...) \
+	do { \
+		if ((DBG_ENABLED) && (DbgLevel >= dbglvl)) { \
+			AsciiPrint("%a(%d): ", FN, __LINE__); \
+			AsciiPrint(fmt, ##__VA_ARGS__); \
+		} \
+	} while (0)
+#else /* #if (defined(__GNUC__)) */
 #define DBG_PR(dbglvl, fmt, ...) \
 	do { \
 		if ((DBG_ENABLED) && (DbgLevel >= dbglvl)) { \
@@ -98,7 +107,17 @@ Defines
 			AsciiPrint(fmt, __VA_ARGS__); \
 		} \
 	} while (0)
+#endif /* #if (defined(__GNUC__)) */
 
+#if (defined(__GNUC__))
+#define DBG_PR1(dbglvl, fn, ln, fmt, ...) \
+	do { \
+		if ((DBG_ENABLED) && (DbgLevel >= dbglvl)) { \
+			AsciiPrint("%a(%d): ", fn, ln); \
+			AsciiPrint(fmt, ##__VA_ARGS__); \
+		} \
+	} while (0)
+#else /* #if (defined(__GNUC__)) */
 #define DBG_PR1(dbglvl, fn, ln, fmt, ...) \
 	do { \
 		if ((DBG_ENABLED) && (DbgLevel >= dbglvl)) { \
@@ -106,6 +125,7 @@ Defines
 			AsciiPrint(fmt, __VA_ARGS__); \
 		} \
 	} while (0)
+#endif /* #if (defined(__GNUC__)) */
 
 /* Example use: DBG_PR2((fmt, ...)) */
 #define DBG_PR2(args) \
