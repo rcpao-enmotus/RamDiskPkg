@@ -19,7 +19,7 @@ https://github.com/tianocore-docs/Docs/raw/master/Driver_Developer/UDK2014.IHV.z
 UDK2014.IHV/Conf/target.txt
 ACTIVE_PLATFORM       = RamDiskPkg/RamDiskPkg.dsc
 TARGET_ARCH           = X64
-TOOL_CHAIN_TAG        = VS2012x86
+TOOL_CHAIN_TAG        = VS2012x86 # or GCC##
 
 cd UDK2014.IHV
 git clone git@github.com:rcpao-enmotus/RamDiskPkg.git
