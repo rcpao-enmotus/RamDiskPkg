@@ -4,11 +4,14 @@ https://github.com/rcpao-enmotus/RamDiskPkg
 Roger C. Pao <rcpao.enmotus+RamDiskEfi@gmail.com>
 
 
-This version compiles diskimage.h directly into RamDisk.efi.
+diskimage.h is compiled directly into RamDisk.efi.
 
-RamDisk.img can be mounted by ImDisk Virtual Disk Driver available from 
+Copy one of the EFI-*.img to diskimage.img.
+*.img can be mounted by ImDisk Virtual Disk Driver available from 
 http://www.ltr-data.se/opencode.html/
-Use xxd-i.sh to generate diskimage.h from RamDisk.img.
+
+Run xxd-i.sh to generate diskimage.h from diskimage.img.
+'xxd: Hexdump utility' is available in cygwin.
 
 
 Build Instructions
@@ -19,11 +22,12 @@ https://github.com/tianocore-docs/Docs/raw/master/Driver_Developer/UDK2014.IHV.z
 UDK2014.IHV/Conf/target.txt
 ACTIVE_PLATFORM       = RamDiskPkg/RamDiskPkg.dsc
 TARGET_ARCH           = X64
-TOOL_CHAIN_TAG        = VS2012x86 # or GCC##
+TOOL_CHAIN_TAG        = VS2012x86 # or GCC48 depending on 'gcc --version'
 
 cd UDK2014.IHV
 git clone git@github.com:rcpao-enmotus/RamDiskPkg.git
 
+$ ./xxd-i.sh #to generate diskimage.h from diskimage.img
 build
 
 RamDisk.efi locations:
