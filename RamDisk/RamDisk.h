@@ -117,8 +117,8 @@ Externals
 #if (defined(__RAM_DISK_C))
 
 #include "diskimage.h"
-#define diskimage RamDisk_img
-#define diskimage_len RamDisk_img_len
+#define diskimage diskimage_img
+#define diskimage_len diskimage_img_len
 
 
 static RAM_DISK_DEVICE_PATH RamDiskDevicePath = {
