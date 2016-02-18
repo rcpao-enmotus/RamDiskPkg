@@ -209,17 +209,17 @@ RamDiskBlockIoWriteBlocks (
   Media = &RamDisk->BlockIoMedia;
 
   if (BufferSize % Media->BlockSize != 0) {
-    DBG_PR(DBG_RamDiskBlockIoReadBlocks, "Error: (BufferSize % Media->BlockSize != 0)\n");
+    DBG_PR(DBG_RamDiskBlockIoWriteBlocks, "Error: (BufferSize % Media->BlockSize != 0)\n");
     return EFI_BAD_BUFFER_SIZE;
   }
 
   if (Lba > Media->LastBlock) {
-    DBG_PR(DBG_RamDiskBlockIoReadBlocks, "Error: (Lba > Media->LastBlock)\n");
+    DBG_PR(DBG_RamDiskBlockIoWriteBlocks, "Error: (Lba > Media->LastBlock)\n");
     return EFI_INVALID_PARAMETER;
   }
 
   if (Lba + BufferSize / Media->BlockSize - 1 > Media->LastBlock) {
-    DBG_PR(DBG_RamDiskBlockIoReadBlocks, "Error: (Lba + BufferSize / Media->BlockSize - 1 > Media->LastBlock)\n");
+    DBG_PR(DBG_RamDiskBlockIoWriteBlocks, "Error: (Lba + BufferSize / Media->BlockSize - 1 > Media->LastBlock)\n");
     return EFI_INVALID_PARAMETER;
   }
 
