@@ -327,15 +327,14 @@ RamDiskDriverBindingStart (
   RamDisk.BlockIoMedia.LastBlock         = RamDisk.RamBufferSize / RamDisk.BlockIoMedia.BlockSize - 1;
 
   {
+#if 0
     UINT64 DiskId = 0;
 
-#if 0
     /* DiskId must not change between reboots or the stored Boot Menu entry will not match */
     (void)gBS->GetNextMonotonicCount(&DiskId);
     DBG_PR(DBG_RamDiskDriverBindingStart, "GetNextMonotonicCount DiskId=%x\n", DiskId);
-#endif
-
     CopyMem(&RamDiskDevicePath.DiskId, &DiskId, sizeof(DiskId));
+#endif
 
     RamDisk.DevicePath = DuplicateDevicePath((EFI_DEVICE_PATH*)&RamDiskDevicePath);
     if(RamDisk.DevicePath == NULL) {
