@@ -101,7 +101,7 @@ typedef struct _RAM_DISK_DEVICE_PATH {
 typedef struct _RAM_DISK {
   EFI_BLOCK_IO_PROTOCOL BlockIoProtocol;
   EFI_BLOCK_IO_MEDIA BlockIoMedia;
-  EFI_DEVICE_PATH *ParentDevicePath;
+  //unused: EFI_DEVICE_PATH *ParentDevicePath;
   EFI_DEVICE_PATH *DevicePath;
   unsigned char *RamBuffer; /* diskimage */
   unsigned int RamBufferSize; /* diskimage_len */
