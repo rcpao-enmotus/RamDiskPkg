@@ -1,7 +1,10 @@
 rem build-rom.bat
 
-set IFNAME=..\Build\RamDiskPkg\DEBUG_VS2012x86\X64\RamDisk.efi
-dir %IFNAME%
+set SRCDIR=..\Build\RamDiskPkg\DEBUG_VS2012x86\X64
+set IFNAME=RamDisk.efi
+dir %SRCDIR%\%IFNAME%
+
+copy %SRCDIR%\%IFNAME% .
 
 
 rem Enmotus MicroTiering SAS Adapter (Bobcat)
