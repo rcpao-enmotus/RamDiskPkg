@@ -105,7 +105,7 @@ typedef struct _RAM_DISK {
   EFI_DEVICE_PATH *DevicePath;
   unsigned char *RamBuffer; /* diskimage */
   unsigned int RamBufferSize; /* diskimage_len */
-  //unused: EFI_LBA AddLbaOfs;
+  EFI_LBA AddLbaOfs;
   BOOLEAN Installed;
 } RAM_DISK;
 
