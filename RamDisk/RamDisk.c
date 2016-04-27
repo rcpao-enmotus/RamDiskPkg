@@ -431,7 +431,7 @@ RamDiskDriverBindingStart (
   }
 #endif
   ZeroMem(pRamDisk, sizeof(RAM_DISK));
-  pRamDisk->Signature = RAM_DISK_SIGNATURE; /* WARNING: wrong signature does not ASSERT error?! */
+  pRamDisk->Signature = RAM_DISK_SIGNATURE;
 
   /* TBD Load the initial diskimage from a file instead of compiling the image into this driver. */
   pRamDisk->RamBuffer = diskimage;
