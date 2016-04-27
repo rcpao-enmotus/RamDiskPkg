@@ -70,7 +70,7 @@
   gEfiComponentName2ProtocolGuid
   gEfiComponentNameProtocolGuid
   gEfiBlockIoProtocolGuid
-  gEfiBlockIo2ProtocolGuid
+  #gEfiBlockIo2ProtocolGuid
 
 [Guids]
 

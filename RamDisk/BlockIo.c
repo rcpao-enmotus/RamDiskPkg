@@ -64,6 +64,28 @@ EFI_BLOCK_IO_PROTOCOL  gRamDiskBlockIo = {
   RamDiskBlockIoFlushBlocks             // FlushBlocks
 };
 
+
+/*
+http://feishare.com/efimail/messages/20111127-0243-Re__edk2__What_is_the_usage_of_BlockIo2_protocol_-Andrew_Fish.html
+Subject: Re: [edk2] What is the usage of BlockIo2 protocol?
+From: Andrew Fish
+Date: 11/27/2011 2:43 AM
+To: edk2-devel@lists.sourceforge.net
+
+Sergey,
+
+I can answer the general UEFI question. BlockIo2 supports non-blocking disk 
+access. BlockIo calls are all blocking. You can do a blocking call from 
+BlockIo2 by passing in a NULL event to EFI_BLOCK_IO2_TOKEN.Event. See 
+https://edk2.svn.sourceforge.net/svnroot/edk2/trunk/edk2/MdePkg/Include/Protocol/BlockIo2.h
+
+DiskIo and FileSystem are blocking interfaces, so they don't really need 
+BlockIo2. BlockIo2 was added to speed the restore of the hibernation file from 
+disk. 
+
+Andrew Fish
+*/
+
 ///
 /// Block I/O 2 Protocol instance
 ///
@@ -139,7 +161,7 @@ RamDiskBlockIoReadBlocks (
 
   DBG_PR(DBG_RamDiskBlockIoReadBlocks, "MediaId=%08X LBA=%016lX BufferSize=%d Buffer=%16lX\n", MediaId, Lba, BufferSize, Buffer);
 
-  RamDisk = (RAM_DISK *)This;
+  RamDisk = RAM_DISK_FROM_THIS(This);
   Media = &RamDisk->BlockIoMedia;
 
   if (BufferSize % Media->BlockSize != 0) {
@@ -205,7 +227,7 @@ RamDiskBlockIoWriteBlocks (
 
   DBG_PR(DBG_RamDiskBlockIoWriteBlocks, "MediaId=%08X LBA=%016lX BufferSize=%d Buffer=%16lX\n", MediaId, Lba, BufferSize, Buffer);
 
-  RamDisk = (RAM_DISK *)This;
+  RamDisk = RAM_DISK_FROM_THIS(This);
   Media = &RamDisk->BlockIoMedia;
 
   if (BufferSize % Media->BlockSize != 0) {

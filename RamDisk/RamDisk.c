@@ -234,10 +234,78 @@ RamDiskDriverBindingSupported (
 {
 #undef FN
 #define FN "RamDiskDriverBindingSupported"
-#define DBG_RamDiskDriverBindingSupported DL_DISABLED /* DL_DISABLED DL_80 */
+#define DBG_RamDiskDriverBindingSupported DL_80 /* DL_DISABLED DL_80 */
+
+  EFI_STATUS EfiStatus = EFI_SUCCESS;
+
 
   //DBG_PR(DBG_RamDiskDriverBindingSupported, "entered\n");
-  return (EFI_SUCCESS);
+
+#if 0
+  /*
+   * ERROR: UEFI Spec. says to test in DriverBindingSupported() before DriverBindingStart(), 
+   * but this _always_ returns Unsupported or Access Denied in DriverBindingSupported()
+   * and DriverBindingStart().
+   */
+  {
+    EFI_BLOCK_IO_PROTOCOL *BlockIo;
+
+    EfiStatus = gBS->OpenProtocol (
+      ControllerHandle, /* Handle */
+      &gEfiBlockIoProtocolGuid, /* Protocol */
+      (VOID **)&BlockIo, /* Interface, ignored if Attributes is EFI_OPEN_PROTOCOL_TEST_PROTOCOL */
+      This->DriverBindingHandle, /* AgentHandle */
+      ControllerHandle, /* ControllerHandle */
+      EFI_OPEN_PROTOCOL_TEST_PROTOCOL /* Attributes */
+    );
+    if (EFI_ERROR(EfiStatus)) {
+      DBG_PR(DBG_RamDiskDriverBindingSupported, "gEfiBlockIoProtocolGuid EFI_OPEN_PROTOCOL_TEST_PROTOCOL %r\n", EfiStatus);
+      return (EfiStatus);
+    }
+    DBG_PR(DBG_RamDiskDriverBindingSupported, "gEfiBlockIoProtocolGuid EFI_OPEN_PROTOCOL_TEST_PROTOCOL %r\n", EfiStatus);
+    gBS->CloseProtocol(
+      ControllerHandle,
+      &gEfiBlockIoProtocolGuid,
+      This->DriverBindingHandle,
+      ControllerHandle
+    );
+  }
+#endif
+
+
+#if 0
+  /*
+   * ERROR: UEFI Spec. says to test in DriverBindingSupported() before DriverBindingStart(), 
+   * but this _always_ returns Unsupported or Access Denied in DriverBindingSupported()
+   * and DriverBindingStart().
+   */
+  {
+    EFI_BLOCK_IO_PROTOCOL *BlockIo;
+
+    EfiStatus = gBS->OpenProtocol (
+      ControllerHandle, /* Handle */
+      &gEfiBlockIoProtocolGuid, /* Protocol */
+      (VOID **)&BlockIo, /* Interface, ignored if Attributes is EFI_OPEN_PROTOCOL_TEST_PROTOCOL */
+      This->DriverBindingHandle, /* AgentHandle */
+      ControllerHandle, /* ControllerHandle */
+      EFI_OPEN_PROTOCOL_BY_DRIVER /* Attributes */
+    );
+    if (EFI_ERROR(EfiStatus)) {
+      DBG_PR(DBG_RamDiskDriverBindingSupported, "gEfiBlockIoProtocolGuid EFI_OPEN_PROTOCOL_BY_DRIVER %r\n", EfiStatus);
+      return (EfiStatus);
+    }
+    DBG_PR(DBG_RamDiskDriverBindingSupported, "gEfiBlockIoProtocolGuid EFI_OPEN_PROTOCOL_BY_DRIVER %r\n", EfiStatus);
+    gBS->CloseProtocol(
+      ControllerHandle,
+      &gEfiBlockIoProtocolGuid,
+      This->DriverBindingHandle,
+      ControllerHandle
+    );
+  }
+#endif
+
+
+  return (EfiStatus);
 }
 
 /**
@@ -285,13 +353,13 @@ RamDiskDriverBindingStart (
 {
 #undef FN
 #define FN "RamDiskDriverBindingStart"
-#define DBG_RamDiskDriverBindingStart DL_DISABLED /* DL_DISABLED DL_80 */
+#define DBG_RamDiskDriverBindingStart DL_80 /* DL_DISABLED DL_80 */
+  RAM_DISK *pRamDisk = &RamDisk;
   EFI_STATUS EfiStatus = EFI_UNSUPPORTED;
 
 
-  DBG_PR(DBG_RamDiskDriverBindingStart, "entered\n");
-
-  if (RamDisk.Installed) {
+  //DBG_PR(DBG_RamDiskDriverBindingStart, "entered\n");
+  if (pRamDisk->Installed) {
     return (EFI_ALREADY_STARTED);
   }
 
@@ -304,27 +372,88 @@ RamDiskDriverBindingStart (
   }
 
 
+#if 0
+  /*
+   * ERROR: UEFI Spec. says to test in DriverBindingSupported() before DriverBindingStart(), 
+   * but this _always_ returns Unsupported or Access Denied in DriverBindingSupported()
+   * and DriverBindingStart().
+   */
+  {
+    EFI_BLOCK_IO_PROTOCOL *BlockIo;
+
+    EfiStatus = gBS->OpenProtocol (
+      ControllerHandle, /* Handle */
+      &gEfiBlockIoProtocolGuid, /* Protocol */
+      (VOID **)&BlockIo, /* Interface, ignored if Attributes is EFI_OPEN_PROTOCOL_TEST_PROTOCOL */
+      This->DriverBindingHandle, /* AgentHandle */
+      ControllerHandle, /* ControllerHandle */
+      EFI_OPEN_PROTOCOL_BY_DRIVER /* Attributes */
+    );
+    if (EFI_ERROR(EfiStatus)) {
+      DBG_PR(DBG_RamDiskDriverBindingStart, "gEfiBlockIoProtocolGuid %r\n", EfiStatus);
+      return (EfiStatus);
+    }
+    DBG_PR(DBG_RamDiskDriverBindingSupported, "gEfiBlockIoProtocolGuid %r\n", EfiStatus);
+    gBS->CloseProtocol(
+      ControllerHandle,
+      &gEfiBlockIoProtocolGuid,
+      This->DriverBindingHandle,
+      ControllerHandle
+    );
+  }
+#endif
+
+
+#if 0
+  {
+    EFI_RAM_DISK_DRIVER_PROTOCOL *RamDiskDriverProtocol;
+
+    //
+    // Check if the driver is loaded
+    //
+    EfiStatus = gBS->LocateProtocol(&gEfiRamDiskProtocolGuid, NULL, &RamDiskDriverProtocol);
+    DBG_PR(DBG_RamDiskDriverBindingStart, "gEfiRamDiskProtocolGuid %r\n", EfiStatus);
+  }
+#endif
+
+
+  //
+  // Allocate and zero a private data structure for the Abc device.
+  //
+#if 0
+  EfiStatus = gBS->AllocatePool(
+    EfiBootServicesData,
+    sizeof(RAM_DISK_EXT),
+    &pRamDisk
+  );
+  if (EFI_ERROR(EfiStatus)) {
+    goto ErrorExit;
+  }
+#endif
+  ZeroMem(pRamDisk, sizeof(RAM_DISK));
+  pRamDisk->Signature = RAM_DISK_SIGNATURE; /* WARNING: wrong signature does not ASSERT error?! */
+
   /* TBD Load the initial diskimage from a file instead of compiling the image into this driver. */
-  RamDisk.RamBuffer = diskimage;
-  RamDisk.RamBufferSize = diskimage_len;
+  pRamDisk->RamBuffer = diskimage;
+  pRamDisk->RamBufferSize = diskimage_len;
 
 
-  RamDisk.BlockIoProtocol.Revision       = EFI_BLOCK_IO_PROTOCOL_REVISION;
-  RamDisk.BlockIoProtocol.Media          = &RamDisk.BlockIoMedia;
-  RamDisk.BlockIoProtocol.ReadBlocks     = RamDiskBlockIoReadBlocks;
-  RamDisk.BlockIoProtocol.WriteBlocks    = RamDiskBlockIoWriteBlocks;
-  RamDisk.BlockIoProtocol.FlushBlocks    = RamDiskBlockIoFlushBlocks;
-  RamDisk.BlockIoProtocol.Reset          = RamDiskBlockIoReset;
+  pRamDisk->BlockIoProtocol.Revision       = EFI_BLOCK_IO_PROTOCOL_REVISION;
+  pRamDisk->BlockIoProtocol.Media          = &pRamDisk->BlockIoMedia;
+  pRamDisk->BlockIoProtocol.ReadBlocks     = RamDiskBlockIoReadBlocks;
+  pRamDisk->BlockIoProtocol.WriteBlocks    = RamDiskBlockIoWriteBlocks;
+  pRamDisk->BlockIoProtocol.FlushBlocks    = RamDiskBlockIoFlushBlocks;
+  pRamDisk->BlockIoProtocol.Reset          = RamDiskBlockIoReset;
 
-  RamDisk.BlockIoMedia.MediaId           = 0;
-  RamDisk.BlockIoMedia.RemovableMedia    = FALSE;
-  RamDisk.BlockIoMedia.MediaPresent      = TRUE;
-  RamDisk.BlockIoMedia.LogicalPartition  = TRUE;
-  RamDisk.BlockIoMedia.ReadOnly          = FALSE;
-  RamDisk.BlockIoMedia.WriteCaching      = FALSE;
-  RamDisk.BlockIoMedia.IoAlign           = 4;
-  RamDisk.BlockIoMedia.BlockSize         = 512;
-  RamDisk.BlockIoMedia.LastBlock         = RamDisk.RamBufferSize / RamDisk.BlockIoMedia.BlockSize - 1;
+  pRamDisk->BlockIoMedia.MediaId           = 0;
+  pRamDisk->BlockIoMedia.RemovableMedia    = FALSE;
+  pRamDisk->BlockIoMedia.MediaPresent      = TRUE;
+  pRamDisk->BlockIoMedia.LogicalPartition  = TRUE;
+  pRamDisk->BlockIoMedia.ReadOnly          = FALSE;
+  pRamDisk->BlockIoMedia.WriteCaching      = FALSE;
+  pRamDisk->BlockIoMedia.IoAlign           = 4;
+  pRamDisk->BlockIoMedia.BlockSize         = 512;
+  pRamDisk->BlockIoMedia.LastBlock         = pRamDisk->RamBufferSize / pRamDisk->BlockIoMedia.BlockSize - 1;
 
   {
 #if 0
@@ -336,8 +465,8 @@ RamDiskDriverBindingStart (
     CopyMem(&RamDiskDevicePath.DiskId, &DiskId, sizeof(DiskId));
 #endif
 
-    RamDisk.DevicePath = DuplicateDevicePath((EFI_DEVICE_PATH*)&RamDiskDevicePath);
-    if(RamDisk.DevicePath == NULL) {
+    pRamDisk->DevicePath = DuplicateDevicePath((EFI_DEVICE_PATH*)&RamDiskDevicePath);
+    if(pRamDisk->DevicePath == NULL) {
       DBG_PR(DBG_RamDiskDriverBindingStart, "DuplicateDevicePath returned NULL\n");
       EfiStatus = EFI_OUT_OF_RESOURCES;
       return (EfiStatus);
@@ -345,13 +474,36 @@ RamDiskDriverBindingStart (
   }
 
 
+  /*
+   * Print DevicePath
+   */
+  {
+    CHAR16 *Text = NULL;
+
+    if (pRamDisk->DevicePath != NULL) {
+      /* http://www.bluestop.org/edk2/docs/trunk/_vlv2_tblt_device_pkg_2_override_2_intel_framework_module_pkg_2_library_2_generic_bds_lib_2_device_path_8c_source.html */
+      //Text = DevicePathToStr(pRamDisk->DevicePath);
+      Text = ConvertDevicePathToText(
+        pRamDisk->DevicePath,
+        TRUE, TRUE
+      );
+      if (Text != NULL) {
+        Print(Text);
+      } else {
+        AsciiPrint("(null)");
+      }
+      AsciiPrint("\n");
+    }
+  }
+
+
   EfiStatus = gBS->InstallMultipleProtocolInterfaces(
     &ControllerHandle,
     &gEfiBlockIoProtocolGuid,
-    &RamDisk.BlockIoProtocol,
+    &pRamDisk->BlockIoProtocol,
 
     &gEfiDevicePathProtocolGuid,
-    RamDisk.DevicePath,
+    pRamDisk->DevicePath,
 
     NULL
   );
@@ -361,7 +513,7 @@ RamDiskDriverBindingStart (
   }
 
 
-  RamDisk.Installed = TRUE;
+  pRamDisk->Installed = TRUE;
 
 
   return EfiStatus;

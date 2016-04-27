@@ -1,28 +1,30 @@
 rem build-rom.bat
 
-set SRCDIR=..\Build\RamDiskPkg\DEBUG_VS2012x86\X64
-set IFNAME=RamDisk.efi
-dir %SRCDIR%\%IFNAME%
+rem set SRCDIR=..\Build\RamDiskPkg\DEBUG_VS2012x86\X64
+set SRCDIR=..\Build\RamDiskPkg\RELEASE_VS2012x86\X64
+set IFBASENAME=RamDisk
+set IFNAME=%SRCDIR%\%IFBASENAME%.efi
 
-copy %SRCDIR%\%IFNAME% .
+dir %IFNAME%
+copy %IFNAME% .
 
 
 rem Enmotus MicroTiering SAS Adapter (Bobcat)
 rem -l ClassCode 01h	        ;0F Base Class 01h=Mass storage controller
 rem -f VendorId 01C44h		;PCI VendorId 1c44=Enmotus Inc
 rem -i DeviceId 8000h		;PCI DeviceId 8000=8000 Storage IO Controller
-rem EfiRom.exe -o RamDisk.rom -ec %IFNAME% -l 0x01 -f 0x1C44 -i 0x8000 -v
+rem EfiRom.exe -o %IFBASENAME%.rom -ec %IFNAME% -l 0x01 -f 0x1C44 -i 0x8000 -v
 
 
 rem The Option ROM's ClassCode, VendorId, & DeviceId does not need to match the 
 rem PCIe adapter's Configuration Registers.
-rem RamDisk.rom Option ROM will still be loaded (while Secure Boot is disabled).
+rem %IFBASENAME%.rom Option ROM will still be loaded (while Secure Boot is disabled).
 rem -l ClassCode 00h	        ;0F Base Class 00h=Unclassified device
 rem -f VendorId 01C44h		;PCI VendorId FFFF=Illegal Vendor ID
 rem -i DeviceId 8000h		;PCI DeviceId FFFF=
-EfiRom.exe -o RamDisk.rom -ec %IFNAME% -l 0x00 -f 0xFFFF -i 0xFFFF -v
+EfiRom.exe -o %IFBASENAME%.rom -ec %IFNAME% -l 0x00 -f 0xFFFF -i 0xFFFF -v
 rem EfiRom tool start.
-rem Processing EFI file    ..\Build\RamDiskPkg\DEBUG_VS2012x86\X64\RamDisk.efi
+rem Processing EFI file    ..\Build\RamDiskPkg\DEBUG_VS2012x86\X64\%IFBASENAME%.efi
 rem   Got subsystem = 0xB from image
 rem   File size   = 0x2D2220
 rem   Comp size   = 0x78E4D
@@ -30,7 +32,7 @@ rem   Output size = 0x79000
 rem EfiRom tool done with return code is 0x0.
 
 
-EfiRom.exe -d RamDisk.rom
+EfiRom.exe -d %IFBASENAME%.rom
 rem Image 1 -- Offset 0x0
 rem   ROM header contents
 rem     Signature              0xAA55

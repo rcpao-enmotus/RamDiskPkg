@@ -70,9 +70,27 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //
 
 //
+// Custom Protocol GUID
+//
+#define EFI_RAM_DISK_DRIVER_PROTOCOL_GUID \
+  {0xe8d377e1, 0xd042, 0x11e5, {0x85, 0x0b, 0x00, 0x50, 0x56, 0xc0, 0x00, 0x08}}
+
+//
 // Driver Version
 //
-#define RAM_DISK_VERSION  0x00000000
+#define RAM_DISK_VERSION  0x10
+  /* 
+   * The version number of the EFI Driver that produced the
+   * EFI_DRIVER_BINDING_PROTOCOL. This field is used by
+   * the EFI boot service ConnectController() to determine
+   * the order that driver’s Supported() service will be used
+   * when a controller needs to be started. EFI Driver Binding
+   * Protocol instances with higher Version values will be used
+   * before ones with lower Version values. The Version values
+   * of 0x0-0x0f and 0xfffffff0-0xffffffff are reserved
+   * for platform/OEM specific drivers. The Version values of
+   * 0x10-0xffffffef are reserved for IHV-developed drivers.
+   */
 
 //
 // Protocol instances
@@ -98,7 +116,12 @@ typedef struct _RAM_DISK_DEVICE_PATH {
   EFI_DEVICE_PATH EndDevicePath;
 } RAM_DISK_DEVICE_PATH;
 
+
+#define RAM_DISK_SIGNATURE    SIGNATURE_32('R','a','m','D')
+#define RAM_DISK_FROM_THIS(a) CR(a, RAM_DISK, BlockIoProtocol, RAM_DISK_SIGNATURE)
+  /* RamDisk = RAM_DISK_FROM_THIS(This); finds the RamDisk structure given a RamDisk BlockIoProtocol interface */
 typedef struct _RAM_DISK {
+  UINTN Signature;
   EFI_BLOCK_IO_PROTOCOL BlockIoProtocol;
   EFI_BLOCK_IO_MEDIA BlockIoMedia;
   //unused: EFI_DEVICE_PATH *ParentDevicePath;
@@ -121,6 +144,8 @@ Externals
 #define diskimage_len diskimage_img_len
 
 
+EFI_GUID gEfiRamDiskProtocolGuid = EFI_RAM_DISK_DRIVER_PROTOCOL_GUID;
+
 static RAM_DISK_DEVICE_PATH RamDiskDevicePath = {
   {
     MESSAGING_DEVICE_PATH, /* Type */
@@ -130,8 +155,7 @@ static RAM_DISK_DEVICE_PATH RamDiskDevicePath = {
       0, /* Length MSB */
     }
   },
-  /* GUID {e8d377e1-d042-11e5-850b-005056c00008} */
-  {0xe8d377e1, 0xd042, 0x11e5, {0x85, 0x0b, 0x00, 0x50, 0x56, 0xc0, 0x00, 0x08}},
+  EFI_RAM_DISK_DRIVER_PROTOCOL_GUID,
   {0,0,0,0,0,0,0,0},	// DiskId assigned below
   {
     END_DEVICE_PATH_TYPE,
@@ -149,6 +173,7 @@ extern unsigned int RamDisk_img_len;
 #define diskimage RamDisk_img
 #define diskimage_len RamDisk_img_len
 
+extern EFI_GUID gEfiRamDiskProtocolGuid;
 extern RAM_DISK_DEVICE_PATH RamDiskDevicePath;
 extern RAM_DISK RamDisk;
 
