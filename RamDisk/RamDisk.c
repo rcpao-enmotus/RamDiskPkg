@@ -359,7 +359,7 @@ RamDiskDriverBindingStart (
 
 
   //DBG_PR(DBG_RamDiskDriverBindingStart, "entered\n");
-  if (pRamDisk->Installed) {
+  if (pRamDisk->InstalledDevicePathProtocol || pRamDisk->InstalledBlockIoProtocol) {
     return (EFI_ALREADY_STARTED);
   }
 
@@ -497,8 +497,53 @@ RamDiskDriverBindingStart (
   }
 
 
+#if 1
+  /* Separate each protocol to determine which one is erroring out. */
+
+  /* 
+   * InstallMultipleProtocolInterfaces gEfiDevicePathProtocolGuid returns Invalid Parameter eight times and succeeds on the ninth with
+   * AMD Gardenia, BIOS Version RGA1100B, InsydeH2O Version 05.04.14, BIOS Release Data 06/17/2015, AGESA Version CarrizoPI 1.1.0.0, 
+   * (built-in) EFI Shell version 2.40 [21524.0], Current running mode 1.1.2.
+   */
   EfiStatus = gBS->InstallMultipleProtocolInterfaces(
     &ControllerHandle,
+
+    //&gEfiBlockIoProtocolGuid,
+    //&pRamDisk->BlockIoProtocol,
+
+    &gEfiDevicePathProtocolGuid,
+    pRamDisk->DevicePath,
+
+    NULL
+  );
+  if (EFI_ERROR(EfiStatus)) {
+    DBG_PR(DBG_RamDiskDriverBindingStart, "InstallMultipleProtocolInterfaces gEfiDevicePathProtocolGuid failed %r\n", EfiStatus);
+    return (EfiStatus);
+  }
+  pRamDisk->InstalledDevicePathProtocol = TRUE;
+
+  EfiStatus = gBS->InstallMultipleProtocolInterfaces(
+    &ControllerHandle,
+
+    &gEfiBlockIoProtocolGuid,
+    &pRamDisk->BlockIoProtocol,
+
+    //&gEfiDevicePathProtocolGuid,
+    //pRamDisk->DevicePath,
+
+    NULL
+  );
+  if (EFI_ERROR(EfiStatus)) {
+    DBG_PR(DBG_RamDiskDriverBindingStart, "InstallMultipleProtocolInterfaces gEfiBlockIoProtocolGuid failed %r\n", EfiStatus);
+    return (EfiStatus);
+  }
+  pRamDisk->InstalledBlockIoProtocol = TRUE;
+
+#elif 0
+
+  EfiStatus = gBS->InstallMultipleProtocolInterfaces(
+    &ControllerHandle,
+
     &gEfiBlockIoProtocolGuid,
     &pRamDisk->BlockIoProtocol,
 
@@ -508,12 +553,13 @@ RamDiskDriverBindingStart (
     NULL
   );
   if (EFI_ERROR(EfiStatus)) {
-    DBG_PR(DBG_RamDiskDriverBindingStart, "InstallMultipleProtocolInterfaces failed %r\n", EfiStatus);
+    DBG_PR(DBG_RamDiskDriverBindingStart, "InstallMultipleProtocolInterfaces (all in one) failed %r\n", EfiStatus);
     return (EfiStatus);
   }
+  pRamDisk->InstalledDevicePathProtocol = TRUE;
+  pRamDisk->InstalledBlockIoProtocol = TRUE;
 
-
-  pRamDisk->Installed = TRUE;
+#endif
 
 
   return EfiStatus;
@@ -557,8 +603,52 @@ RamDiskDriverBindingStop (
 #undef FN
 #define FN "RamDiskDriverBindingStop"
 #define DBG_RamDiskDriverBindingStop DL_80 /* DL_DISABLED DL_80 */
+  RAM_DISK *pRamDisk = &RamDisk;
+  EFI_STATUS EfiStatus = EFI_UNSUPPORTED;
 
 
-  DBG_PR(DBG_RamDiskDriverBindingStop, "entered\n");
-  return EFI_UNSUPPORTED;
+  DBG_PR(DBG_RamDiskDriverBindingStop, "entered\n"); /* Why is this silent? */
+
+  if (pRamDisk->InstalledDevicePathProtocol) {
+    EfiStatus = gBS->UninstallMultipleProtocolInterfaces(
+      &ControllerHandle,
+
+      //&gEfiBlockIoProtocolGuid,
+      //&pRamDisk->BlockIoProtocol,
+
+      &gEfiDevicePathProtocolGuid,
+      pRamDisk->DevicePath,
+
+      NULL
+    );
+    if (EFI_ERROR(EfiStatus)) {
+      DBG_PR(DBG_RamDiskDriverBindingStop, "UninstallMultipleProtocolInterfaces gEfiDevicePathProtocolGuid failed %r\n", EfiStatus);
+      EfiStatus = EFI_DEVICE_ERROR;
+      return (EfiStatus);
+    }
+    pRamDisk->InstalledDevicePathProtocol = FALSE;
+  }
+  DBG_PR(DBG_RamDiskDriverBindingStop, "UninstallMultipleProtocolInterfaces gEfiDevicePathProtocolGuid %r\n", EfiStatus);
+
+  if (pRamDisk->InstalledBlockIoProtocol) {
+    EfiStatus = gBS->UninstallMultipleProtocolInterfaces(
+      &ControllerHandle,
+
+      &gEfiBlockIoProtocolGuid,
+      &pRamDisk->BlockIoProtocol,
+
+      //&gEfiDevicePathProtocolGuid,
+      //pRamDisk->DevicePath,
+
+      NULL
+    );
+    if (EFI_ERROR(EfiStatus)) {
+      DBG_PR(DBG_RamDiskDriverBindingStop, "UninstallMultipleProtocolInterfaces gEfiBlockIoProtocolGuid failed %r\n", EfiStatus);
+      return (EfiStatus);
+    }
+    pRamDisk->InstalledBlockIoProtocol = FALSE;
+  }
+  DBG_PR(DBG_RamDiskDriverBindingStop, "UninstallMultipleProtocolInterfaces gEfiBlockIoProtocolGuid %r\n", EfiStatus);
+
+  return EFI_SUCCESS;
 }
