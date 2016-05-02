@@ -651,4 +651,10 @@ RamDiskDriverBindingStop (
   DBG_PR(DBG_RamDiskDriverBindingStop, "UninstallMultipleProtocolInterfaces gEfiBlockIoProtocolGuid %r\n", EfiStatus);
 
   return EFI_SUCCESS;
+
+  /*
+   * Unload succeeds.
+   * 'drivers' does not list RamDisk.
+   * However, 'map -r' will still map the RamDisk.efi block device and bind a file system to it.
+   */
 }
