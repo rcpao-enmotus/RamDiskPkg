@@ -116,7 +116,7 @@ void PrBufxxdr(void *pBuf, UINTN Length) {
 
 
   /* Print pBuf pointer value */
-  Print(L"%p for %08x\n", pBuf, Length);
+  Print(L"%p%s for %08x\n", pBuf, (pBuf == NULL)? L"": L"(null)", Length);
 
   do {
 
